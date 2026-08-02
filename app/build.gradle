@@ -1,0 +1,39 @@
+apply plugin: 'com.android.application'
+
+def appProps = new Properties()
+file("${rootDir}/app.properties").withInputStream { appProps.load(it) }
+
+android {
+    namespace 'com.lintangxdev.apkbuilder'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.lintangxdev.apkbuilder.job${appProps.getProperty('jobId', 'default')}"
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+
+        resValue "string", "app_name", appProps.getProperty('appName', 'Aplikasi Saya')
+        buildConfigField "String", "APP_URL", "\"${appProps.getProperty('appUrl', 'https://example.com')}\""
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+}
