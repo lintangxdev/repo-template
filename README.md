@@ -1,2 +1,0 @@
-# repo-template
-apk builder
