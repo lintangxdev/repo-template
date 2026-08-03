@@ -3,6 +3,16 @@ apply plugin: 'com.android.application'
 def appProps = new Properties()
 file("${rootDir}/app.properties").withInputStream { appProps.load(it) }
 
+// Paksa 1 versi kotlin-stdlib yang konsisten buat semua dependency,
+// biar gak ada "duplicate class" pas beberapa library narik versi beda-beda.
+configurations.all {
+    resolutionStrategy {
+        force 'org.jetbrains.kotlin:kotlin-stdlib:1.9.24'
+        force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.24'
+        force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.24'
+    }
+}
+
 android {
     namespace 'com.lintangxdev.apkbuilder'
     compileSdk 34
