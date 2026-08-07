@@ -72,3 +72,20 @@ jobs:
           files: ${{ github.event.inputs.job_id }}.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Bersihin logo yang udah kepake (auto-cleanup)
+        if: success()
+        run: |
+          FILE_SHA=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/contents/${{ github.event.inputs.icon_path }}" \
+            | python3 -c "import sys, json; d = json.load(sys.stdin); print(d.get('sha', ''))")
+
+          if [ -n "$FILE_SHA" ]; then
+            curl -s -X DELETE \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Content-Type: application/json" \
+              -d "{\"message\": \"Cleanup logo build ${{ github.event.inputs.job_id }}\", \"sha\": \"$FILE_SHA\"}" \
+              "https://api.github.com/repos/${{ github.repository }}/contents/${{ github.event.inputs.icon_path }}"
+          else
+            echo "File logo udah gak ada (mungkin kepake/kehapus build lain), skip."
+          fi
